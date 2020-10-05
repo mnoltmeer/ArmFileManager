@@ -6,7 +6,7 @@ Copyright 2019-2020 Maxim Noltmeer (m.noltmeer@gmail.com)
 #include <System.hpp>
 #pragma hdrstop
 
-#include "..\..\MyFunc\MyFunc.h"
+#include "..\..\work-functions\MyFunc.h"
 #include "TAMGuardian.h"
 #pragma package(smart_init)
 //---------------------------------------------------------------------------

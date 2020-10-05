@@ -57,8 +57,8 @@
         <Icon_MainIcon>$(BDS)\bin\cbuilder_PROJECTICON.ico</Icon_MainIcon>
         <UWP_CppLogo44>$(BDS)\bin\Artwork\Windows\UWP\cppreg_UwpDefault_44.png</UWP_CppLogo44>
         <UWP_CppLogo150>$(BDS)\bin\Artwork\Windows\UWP\cppreg_UwpDefault_150.png</UWP_CppLogo150>
-        <IncludePath>D:\MyFunc\;D:\;D:\ArmFileManager\AMColServer\;$(IncludePath)</IncludePath>
-        <ILINK_LibraryPath>D:\MyFunc\;D:\;D:\ArmFileManager\AMColServer\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+        <IncludePath>..\..\work-functions\;$(IncludePath)</IncludePath>
+        <ILINK_LibraryPath>..\..\work-functions\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
         <VerInfo_Locale>1058</VerInfo_Locale>
         <SanitizedProjectName>AMColSrv</SanitizedProjectName>
         <Custom_Styles>&quot;Windows10 SlateGray|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Windows10SlateGray.vsf&quot;</Custom_Styles>
@@ -140,9 +140,9 @@
         </CppCompile>
         <None Include="Win32\Debug\server.cfg"/>
         <None Include="Win32\Release\server.cfg"/>
-        <CppCompile Include="D:\MyFunc\MyFunc.cpp">
-            <DependentOn>D:\MyFunc\MyFunc.h</DependentOn>
-            <BuildOrder>6</BuildOrder>
+        <CppCompile Include="..\..\work-functions\MyFunc.cpp">
+            <DependentOn>..\..\work-functions\MyFunc.h</DependentOn>
+            <BuildOrder>5</BuildOrder>
         </CppCompile>
         <FormResources Include="Main.dfm"/>
         <BuildConfiguration Include="Release">

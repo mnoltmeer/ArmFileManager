@@ -7,7 +7,7 @@ Copyright 2019 Maxim Noltmeer (m.noltmeer@gmail.com)
 #pragma hdrstop
 
 #include "Main.h"
-#include "..\..\MyFunc\MyFunc.h"
+#include "..\..\work-functions\MyFunc.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"

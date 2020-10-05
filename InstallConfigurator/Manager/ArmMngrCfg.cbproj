@@ -60,8 +60,10 @@
         <UWP_CppLogo150>$(BDS)\bin\Artwork\Windows\UWP\cppreg_UwpDefault_150.png</UWP_CppLogo150>
         <SanitizedProjectName>ArmMngrCfg</SanitizedProjectName>
         <Custom_Styles>&quot;Onyx Blue|VCLSTYLE|$(BDSCOMMONDIR)\Styles\OnyxBlue.vsf&quot;</Custom_Styles>
-        <IncludePath>D:\MyFunc\;D:\;$(IncludePath)</IncludePath>
-        <ILINK_LibraryPath>D:\MyFunc\;D:\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+        <IncludePath>..\..\..\work-functions\;$(IncludePath)</IncludePath>
+        <ILINK_LibraryPath>..\..\..\work-functions\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+        <VerInfo_Locale>1058</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.2;InternalName=;LegalCopyright=2019 Максим Нольтмєєр m.noltmer@gmail.com;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=АС &quot;Менеджер файлів АРМ ВЗ&quot;;ProductVersion=1.0.1.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <PackageImports>adortl;appanalytics;bcbie;bcbsmp;bindcomp;bindcompdbx;bindcompfmx;bindcompvcl;bindengine;CloudService;CustomIPTransport;dbexpress;dbrtl;dbxcds;DbxClientDriver;DbxCommonDriver;DBXInterBaseDriver;DBXMySQLDriver;DBXSqliteDriver;dsnap;dsnapcon;dsnapxml;FireDAC;FireDACADSDriver;FireDACCommon;FireDACCommonDriver;FireDACCommonODBC;FireDACIBDriver;FireDACMSAccDriver;FireDACMySQLDriver;FireDACPgDriver;FireDACSqliteDriver;fmx;fmxase;fmxdae;fmxFireDAC;fmxobj;IndyCore;IndyIPClient;IndyIPCommon;IndyIPServer;IndyProtocols;IndySystem;inet;inetdb;inetdbxpress;RESTBackendComponents;RESTComponents;rtl;soapmidas;soaprtl;soapserver;svn;tethering;vcl;vclactnband;vcldb;vcldsnap;vclFireDAC;vclie;vclimg;VCLRESTComponents;VclSmp;vcltouch;vclwinx;vclx;xmlrtl;$(PackageImports)</PackageImports>
@@ -136,9 +138,9 @@
             <BuildOrder>1</BuildOrder>
             <PCH>true</PCH>
         </PCHCompile>
-        <CppCompile Include="D:\MyFunc\MyFunc.cpp">
-            <DependentOn>D:\MyFunc\MyFunc.h</DependentOn>
-            <BuildOrder>4</BuildOrder>
+        <CppCompile Include="..\..\..\work-functions\MyFunc.cpp">
+            <DependentOn>..\..\..\work-functions\MyFunc.h</DependentOn>
+            <BuildOrder>3</BuildOrder>
         </CppCompile>
         <FormResources Include="Main.dfm"/>
         <BuildConfiguration Include="Release">

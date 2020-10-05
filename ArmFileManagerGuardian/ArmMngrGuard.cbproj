@@ -58,8 +58,8 @@
         <UWP_CppLogo44>$(BDS)\bin\Artwork\Windows\UWP\cppreg_UwpDefault_44.png</UWP_CppLogo44>
         <UWP_CppLogo150>$(BDS)\bin\Artwork\Windows\UWP\cppreg_UwpDefault_150.png</UWP_CppLogo150>
         <SanitizedProjectName>ArmMngrGuard</SanitizedProjectName>
-        <IncludePath>D:\MyFunc\;..\;D:\;$(IncludePath)</IncludePath>
-        <ILINK_LibraryPath>D:\MyFunc\;..\;D:\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+        <IncludePath>..\..\work-functions\;..\;$(IncludePath)</IncludePath>
+        <ILINK_LibraryPath>..\..\work-functions\;..\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
         <VerInfo_Locale>1058</VerInfo_Locale>
         <ILINK_DisableIncrementalLinking>true</ILINK_DisableIncrementalLinking>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
@@ -152,12 +152,12 @@
             <DependentOn>..\TExchangeConnect.h</DependentOn>
             <BuildOrder>11</BuildOrder>
         </CppCompile>
-        <CppCompile Include="D:\MyFunc\MyFunc.cpp">
-            <DependentOn>D:\MyFunc\MyFunc.h</DependentOn>
-            <BuildOrder>9</BuildOrder>
+        <CppCompile Include="..\..\work-functions\MyFunc.cpp">
+            <DependentOn>..\..\work-functions\MyFunc.h</DependentOn>
+            <BuildOrder>8</BuildOrder>
         </CppCompile>
-        <CppCompile Include="D:\MyFunc\ThreadSafeLog.cpp">
-            <DependentOn>D:\MyFunc\ThreadSafeLog.h</DependentOn>
+        <CppCompile Include="..\..\work-functions\ThreadSafeLog.cpp">
+            <DependentOn>..\..\work-functions\ThreadSafeLog.h</DependentOn>
             <BuildOrder>9</BuildOrder>
         </CppCompile>
         <FormResources Include="Main.dfm"/>

@@ -8,7 +8,7 @@ Copyright 2019-2020 Maxim Noltmeer (m.noltmeer@gmail.com)
 
 #include "RecpOrganizer.h"
 #include "Unit2.h"
-#include "..\..\MyFunc\MyFunc.h"
+#include "..\..\work-functions\MyFunc.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"

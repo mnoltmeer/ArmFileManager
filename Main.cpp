@@ -8,8 +8,8 @@ Copyright 2019-2020 Maxim Noltmeer (m.noltmeer@gmail.com)
 
 #include "TExchangeConnect.h"
 #include "Main.h"
-#include "..\MyFunc\MyFunc.h"
-#include "..\MyFunc\ThreadSafeLog.h"
+#include "..\work-functions\MyFunc.h"
+#include "..\work-functions\ThreadSafeLog.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"

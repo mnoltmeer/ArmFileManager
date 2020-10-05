@@ -3,7 +3,7 @@
 #include <vcl.h>
 #pragma hdrstop
 
-#include "..\..\..\MyFunc\MyFunc.h"
+#include "..\..\..\work-functions\MyFunc.h"
 #include "Main.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)

@@ -15,31 +15,7 @@
         <Projects Include="AMRA\amra.cbproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="VersionChecker\vercheck.cbproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="InstallConfigurator\Manager\ArmMngrCfg.cbproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="FTPFileExchanger\ConfigCreator\FFExCfgCrt.cbproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="FTPFileExchanger\FFEx.cbproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="FTPFileExchanger\FTPFileExchangerGuardian\FFExGuard.cbproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="FTPFileExchanger\InstallConfigurator\FFExPostInstCfg.cbproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="FTPFileExchanger\RemoteConsole\FFExRA.cbproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="FTPFileExchanger\FFExStatisticsCollector\FFExStatServer.cbproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="FTPFileExchanger\LocalisationDLL\Localisation.cbproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -86,15 +62,6 @@
     <Target Name="amra:Make">
         <MSBuild Projects="AMRA\amra.cbproj" Targets="Make"/>
     </Target>
-    <Target Name="vercheck">
-        <MSBuild Projects="VersionChecker\vercheck.cbproj"/>
-    </Target>
-    <Target Name="vercheck:Clean">
-        <MSBuild Projects="VersionChecker\vercheck.cbproj" Targets="Clean"/>
-    </Target>
-    <Target Name="vercheck:Make">
-        <MSBuild Projects="VersionChecker\vercheck.cbproj" Targets="Make"/>
-    </Target>
     <Target Name="ArmMngrCfg">
         <MSBuild Projects="InstallConfigurator\Manager\ArmMngrCfg.cbproj"/>
     </Target>
@@ -104,77 +71,14 @@
     <Target Name="ArmMngrCfg:Make">
         <MSBuild Projects="InstallConfigurator\Manager\ArmMngrCfg.cbproj" Targets="Make"/>
     </Target>
-    <Target Name="FFExCfgCrt">
-        <MSBuild Projects="FTPFileExchanger\ConfigCreator\FFExCfgCrt.cbproj"/>
-    </Target>
-    <Target Name="FFExCfgCrt:Clean">
-        <MSBuild Projects="FTPFileExchanger\ConfigCreator\FFExCfgCrt.cbproj" Targets="Clean"/>
-    </Target>
-    <Target Name="FFExCfgCrt:Make">
-        <MSBuild Projects="FTPFileExchanger\ConfigCreator\FFExCfgCrt.cbproj" Targets="Make"/>
-    </Target>
-    <Target Name="FFEx">
-        <MSBuild Projects="FTPFileExchanger\FFEx.cbproj"/>
-    </Target>
-    <Target Name="FFEx:Clean">
-        <MSBuild Projects="FTPFileExchanger\FFEx.cbproj" Targets="Clean"/>
-    </Target>
-    <Target Name="FFEx:Make">
-        <MSBuild Projects="FTPFileExchanger\FFEx.cbproj" Targets="Make"/>
-    </Target>
-    <Target Name="FFExGuard">
-        <MSBuild Projects="FTPFileExchanger\FTPFileExchangerGuardian\FFExGuard.cbproj"/>
-    </Target>
-    <Target Name="FFExGuard:Clean">
-        <MSBuild Projects="FTPFileExchanger\FTPFileExchangerGuardian\FFExGuard.cbproj" Targets="Clean"/>
-    </Target>
-    <Target Name="FFExGuard:Make">
-        <MSBuild Projects="FTPFileExchanger\FTPFileExchangerGuardian\FFExGuard.cbproj" Targets="Make"/>
-    </Target>
-    <Target Name="FFExPostInstCfg">
-        <MSBuild Projects="FTPFileExchanger\InstallConfigurator\FFExPostInstCfg.cbproj"/>
-    </Target>
-    <Target Name="FFExPostInstCfg:Clean">
-        <MSBuild Projects="FTPFileExchanger\InstallConfigurator\FFExPostInstCfg.cbproj" Targets="Clean"/>
-    </Target>
-    <Target Name="FFExPostInstCfg:Make">
-        <MSBuild Projects="FTPFileExchanger\InstallConfigurator\FFExPostInstCfg.cbproj" Targets="Make"/>
-    </Target>
-    <Target Name="FFExRA">
-        <MSBuild Projects="FTPFileExchanger\RemoteConsole\FFExRA.cbproj"/>
-    </Target>
-    <Target Name="FFExRA:Clean">
-        <MSBuild Projects="FTPFileExchanger\RemoteConsole\FFExRA.cbproj" Targets="Clean"/>
-    </Target>
-    <Target Name="FFExRA:Make">
-        <MSBuild Projects="FTPFileExchanger\RemoteConsole\FFExRA.cbproj" Targets="Make"/>
-    </Target>
-    <Target Name="FFExStatServer">
-        <MSBuild Projects="FTPFileExchanger\FFExStatisticsCollector\FFExStatServer.cbproj"/>
-    </Target>
-    <Target Name="FFExStatServer:Clean">
-        <MSBuild Projects="FTPFileExchanger\FFExStatisticsCollector\FFExStatServer.cbproj" Targets="Clean"/>
-    </Target>
-    <Target Name="FFExStatServer:Make">
-        <MSBuild Projects="FTPFileExchanger\FFExStatisticsCollector\FFExStatServer.cbproj" Targets="Make"/>
-    </Target>
-    <Target Name="Localisation">
-        <MSBuild Projects="FTPFileExchanger\LocalisationDLL\Localisation.cbproj"/>
-    </Target>
-    <Target Name="Localisation:Clean">
-        <MSBuild Projects="FTPFileExchanger\LocalisationDLL\Localisation.cbproj" Targets="Clean"/>
-    </Target>
-    <Target Name="Localisation:Make">
-        <MSBuild Projects="FTPFileExchanger\LocalisationDLL\Localisation.cbproj" Targets="Make"/>
-    </Target>
     <Target Name="Build">
-        <CallTarget Targets="ArmMngr;ArmMngrGuard;AMColSrv;amra;vercheck;ArmMngrCfg;FFExCfgCrt;FFEx;FFExGuard;FFExPostInstCfg;FFExRA;FFExStatServer;Localisation"/>
+        <CallTarget Targets="ArmMngr;ArmMngrGuard;AMColSrv;amra;ArmMngrCfg"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="ArmMngr:Clean;ArmMngrGuard:Clean;AMColSrv:Clean;amra:Clean;vercheck:Clean;ArmMngrCfg:Clean;FFExCfgCrt:Clean;FFEx:Clean;FFExGuard:Clean;FFExPostInstCfg:Clean;FFExRA:Clean;FFExStatServer:Clean;Localisation:Clean"/>
+        <CallTarget Targets="ArmMngr:Clean;ArmMngrGuard:Clean;AMColSrv:Clean;amra:Clean;ArmMngrCfg:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="ArmMngr:Make;ArmMngrGuard:Make;AMColSrv:Make;amra:Make;vercheck:Make;ArmMngrCfg:Make;FFExCfgCrt:Make;FFEx:Make;FFExGuard:Make;FFExPostInstCfg:Make;FFExRA:Make;FFExStatServer:Make;Localisation:Make"/>
+        <CallTarget Targets="ArmMngr:Make;ArmMngrGuard:Make;AMColSrv:Make;amra:Make;ArmMngrCfg:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
