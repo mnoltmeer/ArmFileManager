@@ -1,0 +1,253 @@
+/*!
+Copyright 2019-2020 Maxim Noltmeer (m.noltmeer@gmail.com)
+*/
+//---------------------------------------------------------------------------
+
+#ifndef TExchangeConnectH
+#define TExchangeConnectH
+
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+#include <Vcl.ComCtrls.hpp>
+#include <IdFTP.hpp>
+#include <vector>
+#include "..\..\MyFunc\ThreadSafeLog.h"
+
+enum ExchageExitCode {EE_NO_FILES = 0,
+					  EE_ALL_FILES = 1,
+					  EE_SOME_FILES = 2,
+                      EE_SOME_FILES_WITH_ERR = 3,
+					  EE_ERROR = -2};
+
+extern String AppPath, IndexVZ, RegionID, LogName, StationID;
+
+struct VARPAIR
+{
+  String Var;
+  String Val;
+};
+
+struct SERVCFG
+{
+  String Caption;
+  String Host;
+  int Port;
+  String User;
+  String Pwd;
+  String RemDirDl;
+  String RemDirUl;
+  String LocDirDl;
+  String LocDirUl;
+  String BackUpDirDl;
+  String BackUpDirUl;
+  unsigned char TransType;
+  int MonitoringInterval;
+  int ConnInterval;
+  int MaxTry;
+  String UploadFilesMask;
+  bool RegExUL;
+  String DownloadFilesMask;
+  bool RegExDL;
+  bool LeaveRemoteFiles;
+  bool LeaveLocalFiles;
+  bool EnableDownload;
+  bool EnableUpload;
+  bool BackUpDl;
+  bool BackUpUl;
+  bool RunOnce;
+  bool StartAtTime;
+  bool SubDirsDl;
+  bool SubDirsCrt;
+  TTime TimeStart;
+  int BackUpKeepDays;
+  bool AppendModeUL;
+  bool AppendModeDL;
+};
+
+class TExchangeConnect
+{
+  private:
+	bool Running;
+	bool Init;
+	int ID;
+	unsigned int thID;
+	String Status;
+	String CfgPath;
+	SERVCFG Config;
+	TIdFTP *FtpLoader;
+	TIdTCPClient *Collector;
+	TThreadSafeLog *Log;
+	TMemo *DList;
+	TMemo *UList;
+	bool UseCollector;
+	String CollectorHost;
+	int CollectorPort;
+	bool EndThread;
+	int ExchangeStatus;
+	TStringList *SuccList;
+
+	bool ConnectToFTP();
+
+	void DeleteFiles(TStringList *files);
+
+	void DeleteFilesFromServer(TStringList *files);
+
+	int BackUpFiles(TStringList *files, String destin);
+
+	int LoadFilesFromServer(String source,
+							String mask,
+							String destin,
+							String backup);
+
+	int LoadFilesFromServerSubDirs(String source,
+								   String mask,
+								   String destin,
+								   String backup);
+
+	int SendFilesToServer(String source,
+						  String mask,
+						  String destin,
+						  String backup);
+
+	int SendFilesToServerSubDirs(String source,
+								 String mask,
+								 String destin,
+								 String backup);
+
+	bool IsFileLocked(const String &file);
+    int SubDirLevelCount(const String &source);
+	void ReturnToRoot(int level);
+	void AddSuccessFile(String file);
+
+	int GetFTPFileCount(String source, String mask);
+	int GetFTPFileCountRegEx(String source, String reg_exp);
+
+	int GetFTPFileCountWithSubDirs(String source, String mask);
+	int GetFTPFileCountWithSubDirsRegEx(String source, String reg_exp);
+
+	int GetFTPFileList(TStringList *list, String mask);
+	int GetFTPFileListRegEx(TStringList *list, String reg_exp);
+
+    int GetFTPFile(String source, String destin, int list_index);
+
+	int GetFullDirList(TStringList *list, String mask);
+
+	bool IsFtpDirExist(String source, String dir_name);
+	bool IsFtpFileExist(String source, String file_name);
+
+	String ExtractDirNameFromPath(const String &filepath);
+    String ExtractFileNameFromPath(const String &filepath);
+
+	int CreateServerCfgDirs();
+
+	ExchageExitCode DownLoad(String source, String mask, String destin, String backup);
+
+	ExchageExitCode UpLoad(String source, String mask, String destin, String backup);
+
+	/*int GetID(){return ID;}
+	void SetID(int id){ID = id;}
+
+	unsigned int GetThID(){return thID;}
+	void SetThID(unsigned int id){thID = id;}
+
+	String GetCaption(){return Config.Caption;}
+
+	String GetStatus(){return Status;}
+	void SetStatus(String status){Status = status;}
+
+	String GetCfgPath(){return CfgPath;}
+
+	TMemo *GetDList(){return DList;}
+	void SetDList(TMemo *list){DList = list;}
+
+	TMemo *GetUList(){return UList;}
+	void SetUList(TMemo *list){UList = list;}
+
+	bool GetUseCollector(){return UseCollector;}
+	void SetUseCollector(bool c_use){UseCollector = c_use;}
+
+	String GetCollectorHost(){return CollectorHost;}
+	void SetCollectorHost(String host){CollectorHost = host;}
+
+	int GetCollectorPort(){return CollectorPort;}
+	void SetCollectorPort(int port){CollectorPort = port;}
+
+	bool GetEndThread(){return EndThread;}
+	void SetEndThread(bool th_end){EndThread = th_end;}
+
+	int GetExchangeStatus(){return ExchangeStatus;}
+
+	TStringList *GetSuccList(){return SuccList;}
+	void SetSuccList(TStringList *list){SuccList = list;}*/
+
+    SERVCFG *GetConfig(){return &Config;}
+
+	void CheckConfig(String cfg_file);
+
+	int ReadConfig(String cfg_file);
+
+	void Initialize();
+
+	void SetFtpLoader();
+
+	String ParsingVariables(String str, std::vector<VARPAIR> *vars);
+
+	void ParsingParamsForVars();
+
+	void DeleteOldBackUpDirs();
+
+	void WriteLog(String text);
+
+	int SendToCollector(String cathegory, String text);
+
+  public:
+	TExchangeConnect(TIdTCPClient *Collector,
+					 bool use_collector,
+					 TTrayIcon *Icon,
+					 TThreadSafeLog *Log,
+					 int ID);
+
+	TExchangeConnect(TIdTCPClient *Collector,
+					 bool use_collector,
+					 TTrayIcon *Icon,
+					 TThreadSafeLog *Log,
+					 String cfg_file,
+					 int ID);
+
+	virtual ~TExchangeConnect();
+
+	__property int ServerID = {read = ID, write = ID};
+	__property unsigned int ServerThreadID = {read = thID, write = thID};
+	__property String ServerCaption = {read = Config.Caption};
+	__property String ServerStatus = {read = Status, write = Status};
+	__property String ServerCfgPath = {read = CfgPath};
+	__property TMemo *DownloadFileList = {read = DList, write = DList};
+	__property TMemo *UploadfileList = {read = UList, write = UList};
+	__property bool ServerUseCollector = {read = UseCollector, write = UseCollector};
+	__property String UsedCollectorHost = {read = CollectorHost, write = CollectorHost};
+	__property int UsedCollectorPort = {read = CollectorPort, write = CollectorPort};
+	__property SERVCFG *ConnectionConfig = {read = GetConfig};
+	__property bool EndServerThread = {read = EndThread, write = EndThread};
+	__property int CurrentExchangeStatus = {read = ExchangeStatus};
+	__property TStringList *SuccessFiles = {read = SuccList, write = SuccList};
+
+
+	inline bool Working(){return Running;}
+
+	inline bool Connected(){return FtpLoader->Connected();}
+
+	inline bool Initialized(){return Init;}
+
+	inline bool ReInitialize(){Initialize(); return Init;}
+
+	void Stop();
+
+	void Start();
+
+	int Exchange();
+};
+
+//---------------------------------------------------------------------------
+#endif
