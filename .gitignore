@@ -61,3 +61,6 @@
 /InstallConfigurator/Manager/*.dfm
 /InstallConfigurator/Manager/*.local
 /InstallConfigurator/Manager/*.stat
+/icos
+/AMRA/icos
+/ArmFileManagerGuardian/icos
