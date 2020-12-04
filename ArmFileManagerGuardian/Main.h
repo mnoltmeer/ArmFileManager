@@ -141,7 +141,9 @@ private:	// User declarations
 	int __fastcall ASendVersion(TIdContext *AContext);
 
 	void __fastcall InitInstance();
-    void __fastcall StopInstance();
+	void __fastcall StopInstance();
+
+    void __fastcall AddFirewallRule();
 
 public:		// User declarations
 	__fastcall TMainForm(TComponent* Owner);

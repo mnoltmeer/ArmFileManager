@@ -674,7 +674,7 @@ void __fastcall TMainForm::AURAServerExecute(TIdContext *AContext)
 				if (srv)
 				  {
 					DeleteFile(srv->ServerCfgPath);
-                    DestroyConnection(srv->ServerID);
+					DestroyConnection(srv->ServerID);
 				  }
 				else
 				  throw Exception("невідомий ID з'єднання: " + list->Strings[1]);
@@ -1472,50 +1472,14 @@ void __fastcall TMainForm::FormCreate(TObject *Sender)
 
   if (ReadConfig() == 0)
 	{
-      ShowDlLog();
+	  ShowDlLog();
 	  DlLog->Hide();
 
 	  ShowUlLog();
 	  UlLog->Hide();
 
 	  if (!FirewallRule)
-		{
-		  if (system("netsh advfirewall firewall show rule name=\"ArmMngr\"") != 0)
-			{
-			  AnsiString cmd = "netsh advfirewall firewall add rule name=\"ArmMngr\" dir=in action=allow program=\"" + Application->ExeName + "\" enable=yes profile=all";
-			  system(cmd.c_str());
-			  Sleep(200);
-			  cmd = "netsh advfirewall firewall add rule name=\"ArmMngr\" dir=out action=allow program=\"" + Application->ExeName + "\" enable=yes profile=all";
-			  system(cmd.c_str());
-			  Sleep(200);
-
-			  if (system("netsh advfirewall firewall show rule name=\"AMRA\"") != 0)
-				{
-				  cmd = "netsh advfirewall firewall add rule name=\"AMRA\" dir=in action=allow protocol=TCP localport=" + IntToStr(RemAdmPort) + " enable=yes profile=all";
-				  system(cmd.c_str());
-				  Sleep(200);
-				  cmd = "netsh advfirewall firewall add rule name=\"AMRA\" dir=out action=allow protocol=TCP localport=" + IntToStr(RemAdmPort) + " enable=yes profile=all";
-				  system(cmd.c_str());
-				}
-
-			  if (system("netsh advfirewall firewall show rule name=\"AMCOL\"") != 0)
-				{
-				  cmd = "netsh advfirewall firewall add rule name=\"AMCOL\" dir=in action=allow protocol=TCP localport=" + IntToStr(CollectorPort) + " enable=yes profile=all";
-				  system(cmd.c_str());
-				  Sleep(200);
-				  cmd = "netsh advfirewall firewall add rule name=\"AMCOL\" dir=out action=allow protocol=TCP localport=" + IntToStr(CollectorPort) + " enable=yes profile=all";
-				  system(cmd.c_str());
-				}
-
-			  FirewallRule = true;
-			  SetConfigLine(AppPath + "\\main.cfg", "FirewallRule", "1");
-			}
-		  else
-			{
-              FirewallRule = true;
-			  SetConfigLine(AppPath + "\\main.cfg", "FirewallRule", "1");
-			}
-		}
+		AddFirewallRule();
 
 	  AURAServer->DefaultPort = RemAdmPort;
 	  AURAServer->Active = true;
@@ -1607,6 +1571,116 @@ void __fastcall TMainForm::FormCreate(TObject *Sender)
 	  if (SendReportToMail)
 		SendLog(MailTo, MailSubjectErr, MailFrom, Log->GetText());
 	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::AddFirewallRule()
+{
+  try
+	 {
+	   AnsiString cmd;
+
+	   if (system("netsh advfirewall firewall show rule name=\"ArmMngr\" dir=in") != 0)
+		 {
+		   cmd = "netsh advfirewall firewall add rule name=\"ArmMngr\" dir=in action=allow program=\"" + Application->ExeName + "\" enable=yes profile=domain";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"ArmMngr\" dir=in action=allow program=\"" + Application->ExeName + "\" enable=yes profile=private";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+           cmd = "netsh advfirewall firewall add rule name=\"ArmMngr\" dir=in action=allow program=\"" + Application->ExeName + "\" enable=yes profile=public";
+		   system(cmd.c_str());
+		   Sleep(200);
+		 }
+
+       if (system("netsh advfirewall firewall show rule name=\"ArmMngr\" dir=out") != 0)
+		 {
+		   cmd = "netsh advfirewall firewall add rule name=\"ArmMngr\" dir=out action=allow program=\"" + Application->ExeName + "\" enable=yes profile=domain";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"ArmMngr\" dir=out action=allow program=\"" + Application->ExeName + "\" enable=yes profile=private";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+           cmd = "netsh advfirewall firewall add rule name=\"ArmMngr\" dir=out action=allow program=\"" + Application->ExeName + "\" enable=yes profile=public";
+		   system(cmd.c_str());
+		   Sleep(200);
+		 }
+
+	   if (system("netsh advfirewall firewall show rule name=\"AMRA\" dir=in") != 0)
+		 {
+		   cmd = "netsh advfirewall firewall add rule name=\"AMRA\" dir=in action=allow protocol=TCP localport=" + IntToStr(RemAdmPort) + " enable=yes profile=domain";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"AMRA\" dir=in action=allow protocol=TCP localport=" + IntToStr(RemAdmPort) + " enable=yes profile=private";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"AMRA\" dir=in action=allow protocol=TCP localport=" + IntToStr(RemAdmPort) + " enable=yes profile=public";
+		   system(cmd.c_str());
+		   Sleep(200);
+		 }
+
+       if (system("netsh advfirewall firewall show rule name=\"AMRA\" dir=out") != 0)
+		 {
+		   cmd = "netsh advfirewall firewall add rule name=\"AMRA\" dir=out action=allow protocol=TCP localport=" + IntToStr(RemAdmPort) + " enable=yes profile=domain";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"AMRA\" dir=out action=allow protocol=TCP localport=" + IntToStr(RemAdmPort) + " enable=yes profile=private";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"AMRA\" dir=out action=allow protocol=TCP localport=" + IntToStr(RemAdmPort) + " enable=yes profile=public";
+		   system(cmd.c_str());
+		   Sleep(200);
+		 }
+
+	   if (system("netsh advfirewall firewall show rule name=\"AMCOL\" dir=in") != 0)
+		 {
+		   cmd = "netsh advfirewall firewall add rule name=\"AMCOL\" dir=in action=allow protocol=TCP localport=" + IntToStr(CollectorPort) + " enable=yes profile=domain";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"AMCOL\" dir=in action=allow protocol=TCP localport=" + IntToStr(CollectorPort) + " enable=yes profile=private";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"AMCOL\" dir=in action=allow protocol=TCP localport=" + IntToStr(CollectorPort) + " enable=yes profile=public";
+		   system(cmd.c_str());
+		   Sleep(200);
+		 }
+
+       if (system("netsh advfirewall firewall show rule name=\"AMCOL\" dir=out") != 0)
+		 {
+		   cmd = "netsh advfirewall firewall add rule name=\"AMCOL\" dir=out action=allow protocol=TCP localport=" + IntToStr(CollectorPort) + " enable=yes profile=domain";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"AMCOL\" dir=out action=allow protocol=TCP localport=" + IntToStr(CollectorPort) + " enable=yes profile=private";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"AMCOL\" dir=out action=allow protocol=TCP localport=" + IntToStr(CollectorPort) + " enable=yes profile=public";
+		   system(cmd.c_str());
+		 }
+
+	   if ((system("netsh advfirewall firewall show rule name=\"ArmMngr\" dir=in") == 0) &&
+		   (system("netsh advfirewall firewall show rule name=\"ArmMngr\" dir=out") == 0))
+		 {
+		   FirewallRule = true;
+		   SetConfigLine(AppPath + "\\main.cfg", "FirewallRule", "1");
+		 }
+	 }
+  catch (Exception &e)
+	 {
+	   Log->Add("Створення правила для файрволу: " + e.ToString());
+	   SendToCollector("Створення правила для файрволу: ", e.ToString());
+	 }
 }
 //---------------------------------------------------------------------------
 
@@ -2163,6 +2237,7 @@ void __fastcall TMainForm::LoadFunctionsToELI()
   eIface->AddFunction(L"_ConnCount", L"", &eConnectionsCount);
   eIface->AddFunction(L"_CreateConn", L"sym pFile,num pAddMenu", &eCreateConnection);
   eIface->AddFunction(L"_DestroyConn", L"num pID", &eDestroyConnection);
+  eIface->AddFunction(L"_RemoveConn", L"num pID", &eRemoveConnection);
   eIface->AddFunction(L"_StartConn", L"num pID", &eStartConnection);
   eIface->AddFunction(L"_StopConn", L"num pID", &eStopConnection);
   eIface->AddFunction(L"_ConnID", L"sym pCap", &eConnectionID);
@@ -2261,6 +2336,24 @@ void __fastcall TMainForm::DestroyConnection(int id)
 	{
 	  EndWork(srv);
       SrvList->Delete(SrvList->IndexOf(srv));
+
+	  delete srv;
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::RemoveConnection(int id)
+{
+  Log->Add("ELI: Знищення з'єднання та видалення конфігу");
+  SendToCollector("ELI", "Знищення з'єднання та видалення конфігу");
+
+  TExchangeConnect *srv = FindServer(id);
+
+  if (srv)
+	{
+	  EndWork(srv);
+	  SrvList->Delete(SrvList->IndexOf(srv));
+	  DeleteFile(srv->ServerCfgPath);
 
 	  delete srv;
     }
@@ -2542,6 +2635,26 @@ void __stdcall eDestroyConnection(void *p)
   catch (Exception &e)
 	 {
 	   SaveLog("exceptions.log", "eDestroyConnection(): " + e.ToString());
+	   wcscpy(res, L"0");
+	 }
+
+  ep->SetFunctionResult(ep->GetCurrentFuncName(), res);
+}
+//---------------------------------------------------------------------------
+
+void __stdcall eRemoveConnection(void *p)
+{
+  ELI_INTERFACE *ep = (ELI_INTERFACE*)p;
+  wchar_t res[3];
+
+  try
+	 {
+	   MainForm->RemoveConnection(ep->GetParamToInt(L"pID"));
+       wcscpy(res, L"1");
+	 }
+  catch (Exception &e)
+	 {
+	   SaveLog("exceptions.log", "eRemoveConnection(): " + e.ToString());
 	   wcscpy(res, L"0");
 	 }
 

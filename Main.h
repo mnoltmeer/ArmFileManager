@@ -174,6 +174,7 @@ private:	// User declarations
 	void __fastcall LoadFunctionsToELI();
 	void __fastcall InitInstance();
 	void __fastcall StopInstance();
+	void __fastcall AddFirewallRule();
 
 public:		// User declarations
 	__fastcall TMainForm(TComponent* Owner);
@@ -184,6 +185,7 @@ public:		// User declarations
 	int __fastcall CreateConnection(SERVCFG cfg, bool create_menu);
 	int __fastcall CreateConnection(String file, bool create_menu);
 	void __fastcall DestroyConnection(int id);
+    void __fastcall RemoveConnection(int id);
 	void __fastcall StartConnection(int id);
 	void __fastcall StopConnection(int id);
 	int __fastcall GetConnectionID(String caption);
@@ -223,6 +225,10 @@ void __stdcall eCreateConnection(void *p);
 //знищення з'єднання
 //pID - ІД з'єднання
 void __stdcall eDestroyConnection(void *p);
+
+//знищення з'єднання та видалення файлу конфігу
+//pID - ІД з'єднання
+void __stdcall eRemoveConnection(void *p);
 
 //запуск з'єднання
 //pID - ІД з'єднання

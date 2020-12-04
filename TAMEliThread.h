@@ -19,15 +19,6 @@ private:
 	String script_path;
 	bool logging;
 
-	/*ELI_INTERFACE *GetIface(){return iface;}
-	void SetIface(ELI_INTERFACE *val){if (val){iface = val;}}
-
-	String GetPath(){return script_path;}
-	void SetPath(String val){script_path = val;}
-
-	bool GetLogging(){return logging;}
-	void SetLogging(bool val){logging = val;}*/
-
 protected:
 	void __fastcall Execute();
 public:

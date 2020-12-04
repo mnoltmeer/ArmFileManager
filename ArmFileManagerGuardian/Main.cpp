@@ -1095,43 +1095,7 @@ void __fastcall TMainForm::FormCreate(TObject *Sender)
   if (ReadConfig() == 0)
 	{
 	  if (!FirewallRule)
-		{
-		  if (system("netsh advfirewall firewall show rule name=\"ArmMngrGuardian\"") != 0)
-			{
-			  AnsiString cmd = "netsh advfirewall firewall add rule name=\"ArmMngrGuardian\" dir=in action=allow program=\"" + Application->ExeName + "\" enable=yes profile=all";
-			  system(cmd.c_str());
-			  Sleep(200);
-			  cmd = "netsh advfirewall firewall add rule name=\"ArmMngrGuardian\" dir=out action=allow program=\"" + Application->ExeName + "\" enable=yes profile=all";
-			  system(cmd.c_str());
-			  Sleep(200);
-
-			  if (system("netsh advfirewall firewall show rule name=\"AMGRA\"") != 0)
-				{
-				  cmd = "netsh advfirewall firewall add rule name=\"AMGRA\" dir=in action=allow protocol=TCP localport=" + IntToStr(RemAdmPort) + " enable=yes profile=all";
-				  system(cmd.c_str());
-				  Sleep(200);
-				  cmd = "netsh advfirewall firewall add rule name=\"AMGRA\" dir=out action=allow protocol=TCP localport=" + IntToStr(RemAdmPort) + " enable=yes profile=all";
-				  system(cmd.c_str());
-				}
-
-			  if (system("netsh advfirewall firewall show rule name=\"AMCOL\"") != 0)
-				{
-				  cmd = "netsh advfirewall firewall add rule name=\"AMCOL\" dir=in action=allow protocol=TCP localport=" + IntToStr(CollectorPort) + " enable=yes profile=all";
-				  system(cmd.c_str());
-				  Sleep(200);
-				  cmd = "netsh advfirewall firewall add rule name=\"AMCOL\" dir=out action=allow protocol=TCP localport=" + IntToStr(CollectorPort) + " enable=yes profile=all";
-				  system(cmd.c_str());
-				}
-
-			  FirewallRule = true;
-			  SetConfigLine(AppPath + "\\guardian.cfg", "FirewallRule", "1");
-			}
-		  else
-			{
-              FirewallRule = true;
-			  SetConfigLine(AppPath + "\\guardian.cfg", "FirewallRule", "1");
-            }
-		}
+		AddFirewallRule();
 
 	  SaveLogTimer->Enabled = true;
 
@@ -1163,6 +1127,116 @@ void __fastcall TMainForm::FormCreate(TObject *Sender)
 	  Image1->Enabled = false;
       Image2->Enabled = false;
 	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::AddFirewallRule()
+{
+  try
+	 {
+	   AnsiString cmd;
+
+	   if (system("netsh advfirewall firewall show rule name=\"ArmMngrGuardian\" dir=in") != 0)
+		 {
+		   cmd = "netsh advfirewall firewall add rule name=\"ArmMngrGuardian\" dir=in action=allow program=\"" + Application->ExeName + "\" enable=yes profile=domain";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"ArmMngrGuardian\" dir=in action=allow program=\"" + Application->ExeName + "\" enable=yes profile=private";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"ArmMngrGuardian\" dir=in action=allow program=\"" + Application->ExeName + "\" enable=yes profile=public";
+		   system(cmd.c_str());
+		   Sleep(200);
+		 }
+
+	   if (system("netsh advfirewall firewall show rule name=\"ArmMngrGuardian\" dir=out") != 0)
+		 {
+		   cmd = "netsh advfirewall firewall add rule name=\"ArmMngrGuardian\" dir=out action=allow program=\"" + Application->ExeName + "\" enable=yes profile=domain";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"ArmMngrGuardian\" dir=out action=allow program=\"" + Application->ExeName + "\" enable=yes profile=private";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"ArmMngrGuardian\" dir=out action=allow program=\"" + Application->ExeName + "\" enable=yes profile=public";
+		   system(cmd.c_str());
+		   Sleep(200);
+		 }
+
+	   if (system("netsh advfirewall firewall show rule name=\"AMGRA\" dir=in") != 0)
+		 {
+		   cmd = "netsh advfirewall firewall add rule name=\"AMGRA\" dir=in action=allow protocol=TCP localport=" + IntToStr(RemAdmPort) + " enable=yes profile=domain";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"AMGRA\" dir=in action=allow protocol=TCP localport=" + IntToStr(RemAdmPort) + " enable=yes profile=private";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"AMGRA\" dir=in action=allow protocol=TCP localport=" + IntToStr(RemAdmPort) + " enable=yes profile=public";
+		   system(cmd.c_str());
+		   Sleep(200);
+		 }
+
+	   if (system("netsh advfirewall firewall show rule name=\"AMGRA\" dir=out") != 0)
+		 {
+		   cmd = "netsh advfirewall firewall add rule name=\"AMGRA\" dir=out action=allow protocol=TCP localport=" + IntToStr(RemAdmPort) + " enable=yes profile=domain";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"AMGRA\" dir=out action=allow protocol=TCP localport=" + IntToStr(RemAdmPort) + " enable=yes profile=private";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"AMGRA\" dir=out action=allow protocol=TCP localport=" + IntToStr(RemAdmPort) + " enable=yes profile=public";
+		   system(cmd.c_str());
+		   Sleep(200);
+		 }
+
+	   if (system("netsh advfirewall firewall show rule name=\"AMCOL\" dir=in") != 0)
+		 {
+		   cmd = "netsh advfirewall firewall add rule name=\"AMCOL\" dir=in action=allow protocol=TCP localport=" + IntToStr(CollectorPort) + " enable=yes profile=domain";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"AMCOL\" dir=in action=allow protocol=TCP localport=" + IntToStr(CollectorPort) + " enable=yes profile=private";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"AMCOL\" dir=in action=allow protocol=TCP localport=" + IntToStr(CollectorPort) + " enable=yes profile=public";
+		   system(cmd.c_str());
+		   Sleep(200);
+		 }
+
+       if (system("netsh advfirewall firewall show rule name=\"AMCOL\" dir=out") != 0)
+		 {
+		   cmd = "netsh advfirewall firewall add rule name=\"AMCOL\" dir=out action=allow protocol=TCP localport=" + IntToStr(CollectorPort) + " enable=yes profile=domain";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"AMCOL\" dir=out action=allow protocol=TCP localport=" + IntToStr(CollectorPort) + " enable=yes profile=private";
+		   system(cmd.c_str());
+		   Sleep(200);
+
+		   cmd = "netsh advfirewall firewall add rule name=\"AMCOL\" dir=out action=allow protocol=TCP localport=" + IntToStr(CollectorPort) + " enable=yes profile=public";
+		   system(cmd.c_str());
+		 }
+
+	   if ((system("netsh advfirewall firewall show rule name=\"ArmMngrGuardian\" dir=in") == 0) &&
+		   (system("netsh advfirewall firewall show rule name=\"ArmMngrGuardian\" dir=out") == 0))
+		 {
+		   FirewallRule = true;
+		   SetConfigLine(AppPath + "\\guardian.cfg", "FirewallRule", "1");
+		 }
+	 }
+  catch (Exception &e)
+	 {
+	   Log->Add("Створення правила для файрволу: " + e.ToString());
+	   SendToCollector("Створення правила для файрволу: " + e.ToString());
+	 }
 }
 //---------------------------------------------------------------------------
 
