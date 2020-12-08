@@ -51,7 +51,6 @@ __published:	// IDE-managed Components
 	TLabel *Label9;
 	TComboBox *LogFilter;
 	TPopupMenu *ConnPopupMenu;
-	TTimer *AddrBookCheckTimer;
 	TMenuItem *PPConfig;
 	TMenuItem *PPConnection;
 	TMenuItem *PPConfigShow;
@@ -119,7 +118,6 @@ __published:	// IDE-managed Components
 	void __fastcall DelCfgClick(TObject *Sender);
 	void __fastcall ExportFromAddrBookClick(TObject *Sender);
 	void __fastcall SaveLogClick(TObject *Sender);
-	void __fastcall AddrBookCheckTimerTimer(TObject *Sender);
 	void __fastcall LogFilterChange(TObject *Sender);
 	void __fastcall PPConfigShowClick(TObject *Sender);
 	void __fastcall PPConfigRemoveClick(TObject *Sender);

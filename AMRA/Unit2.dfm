@@ -757,8 +757,6 @@ object AURAForm: TAURAForm
       BevelEdges = []
       BevelOuter = bvNone
       TabOrder = 2
-      ExplicitLeft = 230
-      ExplicitTop = -6
       object CfgList: TValueListEditor
         Left = 0
         Top = 81
@@ -773,10 +771,6 @@ object AURAForm: TAURAForm
           #1047#1085#1072#1095#1077#1085#1085#1103)
         OnMouseDown = CfgListMouseDown
         OnMouseUp = CfgListMouseUp
-        ExplicitLeft = 6
-        ExplicitTop = 48
-        ExplicitWidth = 467
-        ExplicitHeight = 284
         ColWidths = (
           140
           327)
@@ -790,8 +784,6 @@ object AURAForm: TAURAForm
         BevelEdges = []
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitLeft = -2
-        ExplicitTop = -6
         object Label2: TLabel
           Left = 3
           Top = 2
@@ -1105,11 +1097,5 @@ object AURAForm: TAURAForm
         OnClick = PPConnectionStopClick
       end
     end
-  end
-  object AddrBookCheckTimer: TTimer
-    Interval = 30000
-    OnTimer = AddrBookCheckTimerTimer
-    Left = 272
-    Top = 152
   end
 end

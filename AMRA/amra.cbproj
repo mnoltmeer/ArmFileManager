@@ -135,6 +135,10 @@
             <DependentOn>RecpOrganizer.h</DependentOn>
             <BuildOrder>4</BuildOrder>
         </CppCompile>
+        <CppCompile Include="RecpThread.cpp">
+            <DependentOn>RecpThread.h</DependentOn>
+            <BuildOrder>5</BuildOrder>
+        </CppCompile>
         <CppCompile Include="Unit2.cpp">
             <Form>AURAForm</Form>
             <FormType>dfm</FormType>

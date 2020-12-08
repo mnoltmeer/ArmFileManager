@@ -7,6 +7,7 @@ Copyright 2019-2020 Maxim Noltmeer (m.noltmeer@gmail.com)
 #pragma hdrstop
 
 #include "RecpOrganizer.h"
+#include "RecpThread.h"
 #include "Unit2.h"
 #include "..\..\work-functions\MyFunc.h"
 //---------------------------------------------------------------------------
@@ -36,8 +37,8 @@ TCheckBox *PackCheckAll;
 TComboBox *PackGroupList;
 
 TRecpientItemCollection *AddrBook;
+TRecpientCollectionThread *AddrBookChecker;
 String AppPath;
-bool book_changed;
 int col, row;
 //---------------------------------------------------------------------------
 __fastcall TAURAForm::TAURAForm(TComponent* Owner)
@@ -227,9 +228,12 @@ void __fastcall TAURAForm::FormClose(TObject *Sender, TCloseAction &Action)
   if (PacketForm)
     delete PacketForm;
 
-  if (book_changed)
-	AddrBook->Save();
+  AddrBookChecker->Terminate();
 
+  while (!AddrBookChecker->Finished)
+    Sleep(100);
+
+  delete AddrBookChecker;
   delete AddrBook;
 }
 //---------------------------------------------------------------------------
@@ -455,7 +459,12 @@ void __fastcall TAURAForm::FormShow(TObject *Sender)
 		 SaveToFile(AppPath + "\\address.grp", "");
 
 	   AddrBook = new TRecpientItemCollection(AppPath + "\\address.grp");
-       AddrBook->CreateSortedTree(AddrList);
+	   AddrBook->CreateSortedTree(AddrList);
+
+	   AddrBookChecker = new TRecpientCollectionThread(true);
+	   AddrBookChecker->Collection = AddrBook;
+	   AddrBookChecker->CheckInterval = 1000;
+       AddrBookChecker->Resume();
 	 }
   catch (Exception &e)
 	 {
@@ -678,7 +687,7 @@ void __fastcall TAURAForm::AddGroupBookClick(TObject *Sender)
 		 {
 		   AddrBook->Add(0, AddrList->Items->Add(AddrList->Selected, name), name);
 		   AddrBook->CreateSortedTree(AddrList);
-		   book_changed = true;
+		   AddrBookChecker->CollectionChanged = true;
 		 }
 	 }
   catch (Exception &e)
@@ -703,7 +712,7 @@ void __fastcall TAURAForm::DeleteFromBookClick(TObject *Sender)
 			   AddrBook->DeleteRecipientsInGroup(AddrBook->FindGroup(AddrList->Selected)->ID);
 			   AddrBook->Remove(AddrList->Selected);
 			   AddrBook->CreateSortedTree(AddrList);
-			   book_changed = true;
+			   AddrBookChecker->CollectionChanged = true;
 			 }
 		 }
 	   else if (MessageDlg("Видалити запис?", mtConfirmation, TMsgDlgButtons() << mbYes << mbNo, 0) == mrYes)
@@ -712,7 +721,7 @@ void __fastcall TAURAForm::DeleteFromBookClick(TObject *Sender)
 
 		   AddrBook->Remove(itm->ID);
            AddrBook->CreateSortedTree(AddrList);
-		   book_changed = true;
+		   AddrBookChecker->CollectionChanged = true;
 
 		   AddrBook->FindGroup(grp_id)->Node->Expand(true);
 		 }
@@ -736,7 +745,7 @@ void __fastcall TAURAForm::EditBookClick(TObject *Sender)
 		{
           itm->Name = name;
 		  AddrBook->CreateSortedTree(AddrList);
-		  book_changed = true;
+		  AddrBookChecker->CollectionChanged = true;
 		}
 	}
   else
@@ -891,7 +900,7 @@ void __fastcall TAURAForm::EditApplyClick(TObject *Sender)
 		 {
 		   AddrBook->Add(grp->ID, grp->Node, EditName->Text, EditHost->Text, EditPort->Text);
 		   AddrBook->CreateSortedTree(AddrList);
-		   book_changed = true;
+		   AddrBookChecker->CollectionChanged = true;
 		 }
 
 	   prev_grp->Node->Expand(true);
@@ -1043,7 +1052,7 @@ void __fastcall TAURAForm::NewApplyClick(TObject *Sender)
 
 	  AddrBook->CreateSortedTree(AddrList);
 	  AddrBook->FindGroup(name)->Node->Expand(true);
-      book_changed = true;
+      AddrBookChecker->CollectionChanged = true;
 	}
 
   NewForm->Close();
@@ -1748,13 +1757,6 @@ void __fastcall TAURAForm::SaveLogClick(TObject *Sender)
 
   SaveCfgDialog->Filter = old_mask;
   SaveCfgDialog->FileName = "";
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TAURAForm::AddrBookCheckTimerTimer(TObject *Sender)
-{
-  if (book_changed)
-	AddrBook->Save();
 }
 //---------------------------------------------------------------------------
 
