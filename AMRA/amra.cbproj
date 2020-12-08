@@ -114,9 +114,9 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <LinkPackageStatics>rtl.lib;vcl.lib;IndySystem.lib;IndyCore.lib</LinkPackageStatics>
         <VerInfo_Locale>1058</VerInfo_Locale>
-        <VerInfo_Build>16</VerInfo_Build>
+        <VerInfo_Build>17</VerInfo_Build>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.1.16;InternalName=;LegalCopyright=2019-2020 Максим Нольтмєєр (m.noltmeer@gmail.com);LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=АС &quot;Менеджер файлів АРМ ВЗ&quot; Консоль адміністрування;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.1.17;InternalName=;LegalCopyright=2019-2020 Максим Нольтмєєр (m.noltmeer@gmail.com);LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=АС &quot;Менеджер файлів АРМ ВЗ&quot; Консоль адміністрування;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <Icon_MainIcon>amra_Icon.ico</Icon_MainIcon>
         <UWP_CppLogo44>..\icos\new\settings_options_preferences_gears_icon_124617.png</UWP_CppLogo44>
         <UWP_CppLogo150>..\icos\new\settings_options_preferences_gears_icon_124617.png</UWP_CppLogo150>

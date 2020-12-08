@@ -19,53 +19,77 @@ Copyright 2019-2020 Maxim Noltmeer (m.noltmeer@gmail.com)
 #include <Vcl.Buttons.hpp>
 #include <Vcl.Dialogs.hpp>
 #include <Vcl.ComCtrls.hpp>
+#include <Vcl.ExtCtrls.hpp>
+#include <Vcl.Menus.hpp>
 
 //---------------------------------------------------------------------------
 class TAURAForm : public TForm
 {
 __published:	// IDE-managed Components
+	TOpenDialog *OpenCfgDialog;
+	TSaveDialog *SaveCfgDialog;
+	TPanel *LogPanel;
+	TMemo *Log;
+	TPanel *MainPanel;
+	TPanel *AddrBookPanel;
+	TTreeView *AddrList;
+	TPanel *ActionLogPanel;
+	TMemo *ActionLog;
+	TPanel *Panel6;
+	TLabel *Label6;
+	TButton *SaveLog;
+	TPanel *ControlsPanel;
 	TValueListEditor *CfgList;
+	TPanel *AdrBookBtPanel;
+	TBitBtn *AddGroupBook;
+	TBitBtn *AddToBook;
+	TBitBtn *DeleteFromBook;
+	TBitBtn *EditBook;
+	TBitBtn *ImportInAddrBook;
+	TBitBtn *ExportFromAddrBook;
+	TPanel *LogFilterPanel;
+	TLabel *Label9;
+	TComboBox *LogFilter;
+	TPopupMenu *ConnPopupMenu;
+	TTimer *AddrBookCheckTimer;
+	TMenuItem *PPConfig;
+	TMenuItem *PPConnection;
+	TMenuItem *PPConfigShow;
+	TMenuItem *PPConfigRemove;
+	TMenuItem *PPConnectionStart;
+	TMenuItem *PPConnectionStop;
+	TMenuItem *PPConfigAdd;
+	TPanel *ControlHeaderPanel;
+	TLabel *Label2;
 	TEdit *Host;
-	TButton *Connect;
-	TButton *ReadCfg;
-	TButton *SendCfg;
+	TLabel *Label3;
 	TEdit *Port;
 	TLabel *Label1;
-	TLabel *Label2;
-	TLabel *Label3;
-	TComboBox *CfgKind;
-	TMemo *Log;
-	TButton *GetLog;
+	TButton *Connect;
+	TLabel *Label7;
+	TLabel *ModuleVersion;
+	TPanel *ControlFooterPanel;
+	TButton *SaveCfgList;
 	TButton *GetStatus;
+	TButton *GetThreadList;
+	TButton *GetLog;
+	TLabel *Label5;
+	TLabel *Label8;
+	TComboBox *CfgKind;
+	TComboBox *ServList;
+	TButton *ReadCfg;
+	TButton *NewCfg;
 	TButton *CmdRun;
 	TButton *CmdStop;
-	TComboBox *ServList;
+	TButton *SendCfg;
+	TButton *DelCfg;
 	TLabel *Label4;
 	TEdit *RemCompFilePath;
 	TButton *GetFile;
 	TLabel *GetFileStatus;
-	TButton *GetThreadList;
-	TLabel *Label5;
-	TMemo *ActionLog;
-	TLabel *Label6;
 	TButton *Shutdown;
-	TButton *NewCfg;
-	TOpenDialog *OpenCfgDialog;
-	TLabel *Label7;
-	TLabel *ModuleVersion;
 	TButton *RestartGuard;
 	TButton *PacketCmdSend;
-	TBitBtn *EditBook;
-	TBitBtn *DeleteFromBook;
-	TBitBtn *AddToBook;
-	TBitBtn *AddGroupBook;
-	TTreeView *AddrList;
-	TBitBtn *ImportInAddrBook;
-	TButton *SaveCfgList;
-	TButton *DelCfg;
-	TBitBtn *ExportFromAddrBook;
-	TSaveDialog *SaveCfgDialog;
-	TButton *SaveLog;
 	void __fastcall ConnectClick(TObject *Sender);
 	void __fastcall PortClick(TObject *Sender);
 	void __fastcall ReadCfgClick(TObject *Sender);
@@ -95,22 +119,35 @@ __published:	// IDE-managed Components
 	void __fastcall DelCfgClick(TObject *Sender);
 	void __fastcall ExportFromAddrBookClick(TObject *Sender);
 	void __fastcall SaveLogClick(TObject *Sender);
+	void __fastcall AddrBookCheckTimerTimer(TObject *Sender);
+	void __fastcall LogFilterChange(TObject *Sender);
+	void __fastcall PPConfigShowClick(TObject *Sender);
+	void __fastcall PPConfigRemoveClick(TObject *Sender);
+	void __fastcall PPConnectionStartClick(TObject *Sender);
+	void __fastcall PPConnectionStopClick(TObject *Sender);
+	void __fastcall CfgListMouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift,
+          int X, int Y);
+	void __fastcall CfgListMouseUp(TObject *Sender, TMouseButton Button, TShiftState Shift,
+          int X, int Y);
+	void __fastcall PPConfigAddClick(TObject *Sender);
 
 private:	// User declarations
-	int ReadTmpCfg(String cfg);
-	int ReadServerList();
-	int ReadRemoteVersion();
-	int AskToServer(const wchar_t *host, int port, TStringStream *rw_bufer);
-	int SendToServer(const wchar_t *host, int port, TStringStream *rw_bufer);
-	TIdTCPClient *CreateSender(const wchar_t *host, int port);
-	void FreeSender(TIdTCPClient *sender);
-	void AddActionLog(String status);
+	int __fastcall ReadTmpCfg(String cfg);
+	int __fastcall ReadServerList();
+	int __fastcall ReadRemoteVersion();
+	int __fastcall AskToServer(const wchar_t *host, int port, TStringStream *rw_bufer);
+	int __fastcall SendToServer(const wchar_t *host, int port, TStringStream *rw_bufer);
+	TIdTCPClient* __fastcall CreateSender(const wchar_t *host, int port);
+	void __fastcall FreeSender(TIdTCPClient *sender);
+	void __fastcall AddActionLog(String status);
     void __fastcall AURAClientConnected(TObject *Sender);
 	void __fastcall AURAClientDisconnected(TObject *Sender);
-    void CreateNewForm();
-	void CreateEditForm();
-	void CreatePacketForm();
-    void CreateRecpList(std::vector<int> *recp_list);
+	void __fastcall CreateNewForm();
+	void __fastcall CreateEditForm();
+	void __fastcall CreatePacketForm();
+	void __fastcall CreateRecpList(std::vector<int> *recp_list);
+	void __fastcall RequestLog(int conn_id);
+	int __fastcall GetConnectionID(const String &str_with_id);
 
 public:		// User declarations
 	__fastcall TAURAForm(TComponent* Owner);

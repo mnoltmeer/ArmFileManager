@@ -38,6 +38,7 @@ TComboBox *PackGroupList;
 TRecpientItemCollection *AddrBook;
 String AppPath;
 bool book_changed;
+int col, row;
 //---------------------------------------------------------------------------
 __fastcall TAURAForm::TAURAForm(TComponent* Owner)
 	: TForm(Owner)
@@ -53,10 +54,11 @@ void __fastcall TAURAForm::ConnectClick(TObject *Sender)
   Log->Clear();
   CfgList->Strings->Clear();
   ReadServerList();
+  GetStatus->Click();
 }
 //---------------------------------------------------------------------------
 
-void TAURAForm::AddActionLog(String status)
+void __fastcall TAURAForm::AddActionLog(String status)
 {
   ShowLog(status, ActionLog);
   SendMessage(ActionLog->Handle, WM_VSCROLL, SB_BOTTOM, 0);
@@ -73,7 +75,8 @@ void __fastcall TAURAForm::ReadCfgClick(TObject *Sender)
 {
   AddActionLog("Запит конфігураційних даних");
 
-  String msg = "#send%cfg%" + IntToStr(CfgKind->ItemIndex);
+  int id = GetConnectionID(CfgKind->Items->Strings[CfgKind->ItemIndex]);
+  String msg = "#send%cfg%" + IntToStr(id);
 
   TStringStream *ms = new TStringStream(msg, TEncoding::UTF8, true);
 
@@ -85,14 +88,14 @@ void __fastcall TAURAForm::ReadCfgClick(TObject *Sender)
 		 {
 		   String recvmsg = ms->ReadString(ms->Size);
 		   ReadTmpCfg(recvmsg);
-		   ReadCfg->Hint = CfgKind->ItemIndex;
+		   ReadCfg->Hint = id;
 		 }
 	 }
   __finally {delete ms;}
 }
 //---------------------------------------------------------------------------
 
-int TAURAForm::ReadTmpCfg(String cfg)
+int __fastcall TAURAForm::ReadTmpCfg(String cfg)
 {
   int res = 0;
   TStringList *lst = new TStringList();
@@ -112,22 +115,32 @@ int TAURAForm::ReadTmpCfg(String cfg)
 
 void __fastcall TAURAForm::DelCfgClick(TObject *Sender)
 {
-  AddActionLog("Видалення конфігу");
+  if (MessageDlg("Дійсно видалити конфіг " +
+				 CfgKind->Items->Strings[CfgKind->ItemIndex] + " ?",
+				 mtConfirmation,
+				 TMsgDlgButtons() << mbYes << mbNo,
+				 0) == mrYes)
+	{
+      AddActionLog("Видалення конфігу");
 
-  String msg = "#delcfg_id%" + IntToStr(CfgKind->ItemIndex);
+	  int id = GetConnectionID(CfgKind->Items->Strings[CfgKind->ItemIndex]);
+	  String msg = "#delcfg_id%" + IntToStr(id);
 
-  TStringStream *ms = new TStringStream(msg, TEncoding::UTF8, true);
+	  TStringStream *ms = new TStringStream(msg, TEncoding::UTF8, true);
 
-  try
-	 {
-	   ms->Position = 0;
-	   SendToServer(Host->Text.c_str(), Port->Text.ToInt(), ms);
-	 }
-  __finally {delete ms;}
+	  try
+		 {
+		   ms->Position = 0;
+		   SendToServer(Host->Text.c_str(), Port->Text.ToInt(), ms);
+		 }
+	  __finally {delete ms;}
+
+      Connect->Click();
+	}
 }
 //---------------------------------------------------------------------------
 
-int TAURAForm::ReadServerList()
+int __fastcall TAURAForm::ReadServerList()
 {
   String msg = "#send%srvlist";
   TStringStream *ms = new TStringStream(msg, TEncoding::UTF8, true);
@@ -153,18 +166,21 @@ int TAURAForm::ReadServerList()
 		   CfgKind->ItemIndex = 0;
 
 		   for (int i = 0; i < servers->Count; i++)
-			  {
-				CfgKind->Items->Add(servers->Strings[i]);
-			  }
+			  CfgKind->Items->Add(servers->Strings[i]);
 
 		   ServList->Clear();
 		   ServList->Items->Add("0: Усі");
 		   ServList->ItemIndex = 0;
 
 		   for (int i = 0; i < servers->Count; i++)
-			  {
-				ServList->Items->Add(servers->Strings[i]);
-			  }
+			  ServList->Items->Add(servers->Strings[i]);
+
+		   LogFilter->Clear();
+		   LogFilter->Items->Add("0: Весь лог");
+		   LogFilter->ItemIndex = 0;
+
+		   for (int i = 0; i < servers->Count; i++)
+			  LogFilter->Items->Add(servers->Strings[i]);
 		 }
 	  __finally {delete servers;}
 
@@ -179,7 +195,7 @@ int TAURAForm::ReadServerList()
 }
 //---------------------------------------------------------------------------
 
-int TAURAForm::ReadRemoteVersion()
+int __fastcall TAURAForm::ReadRemoteVersion()
 {
   String msg = "#send%version";
   TStringStream *ms = new TStringStream(msg, TEncoding::UTF8, true);
@@ -212,7 +228,7 @@ void __fastcall TAURAForm::FormClose(TObject *Sender, TCloseAction &Action)
     delete PacketForm;
 
   if (book_changed)
-    AddrBook->Save();
+	AddrBook->Save();
 
   delete AddrBook;
 }
@@ -259,31 +275,8 @@ void __fastcall TAURAForm::PortKeyPress(TObject *Sender, System::WideChar &Key)
 
 void __fastcall TAURAForm::GetLogClick(TObject *Sender)
 {
-  Log->Clear();
-  String msg = "#send%log";
-
-  TStringStream *ms = new TStringStream(msg, TEncoding::UTF8, true);
-
-  try
-	 {
-	   ms->Position = 0;
-
-	   if (AskToServer(Host->Text.c_str(), Port->Text.ToInt(), ms) == 0)
-		 {
-		   String recvmsg = ms->ReadString(ms->Size);
-
-           TStringList *lst = new TStringList();
-
-		   try
-			  {
-				StrToList(lst, recvmsg, "&");
-				Log->Lines->AddStrings(lst);
-				SendMessage(Log->Handle, WM_VSCROLL, SB_BOTTOM, 0);
-			  }
-		  __finally {delete lst;}
-		 }
-	 }
-  __finally {delete ms;}
+  int id = GetConnectionID(LogFilter->Items->Strings[LogFilter->ItemIndex]);
+  RequestLog(id);
 }
 //---------------------------------------------------------------------------
 
@@ -313,7 +306,8 @@ void __fastcall TAURAForm::CmdRunClick(TObject *Sender)
 {
   AddActionLog("Надсилання команди запуску з'єднання");
 
-  String msg = "#run%" + IntToStr(ServList->ItemIndex);
+  int id = GetConnectionID(CfgKind->Items->Strings[CfgKind->ItemIndex]);
+  String msg = "#run%" + IntToStr(id);
 
   TStringStream *ms = new TStringStream(msg, TEncoding::UTF8, true);
 
@@ -323,6 +317,8 @@ void __fastcall TAURAForm::CmdRunClick(TObject *Sender)
 	   SendToServer(Host->Text.c_str(), Port->Text.ToInt(), ms);
 	 }
   __finally {delete ms;}
+
+  GetStatus->Click();
 }
 //---------------------------------------------------------------------------
 
@@ -330,7 +326,8 @@ void __fastcall TAURAForm::CmdStopClick(TObject *Sender)
 {
   AddActionLog("Надсилання команди зупинки з'єднання");
 
-  String msg = "#stop%" + IntToStr(ServList->ItemIndex);
+  int id = GetConnectionID(CfgKind->Items->Strings[CfgKind->ItemIndex]);
+  String msg = "#stop%" + IntToStr(id);
 
   TStringStream *ms = new TStringStream(msg, TEncoding::UTF8, true);
 
@@ -340,6 +337,8 @@ void __fastcall TAURAForm::CmdStopClick(TObject *Sender)
 	   SendToServer(Host->Text.c_str(), Port->Text.ToInt(), ms);
 	 }
   __finally {delete ms;}
+
+  GetStatus->Click();
 }
 //---------------------------------------------------------------------------
 
@@ -465,7 +464,7 @@ void __fastcall TAURAForm::FormShow(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-int TAURAForm::AskToServer(const wchar_t *host, int port, TStringStream *rw_bufer)
+int __fastcall TAURAForm::AskToServer(const wchar_t *host, int port, TStringStream *rw_bufer)
 {
   TIdTCPClient *AURAClient;
   int res = 0;
@@ -504,7 +503,7 @@ int TAURAForm::AskToServer(const wchar_t *host, int port, TStringStream *rw_bufe
 }
 //---------------------------------------------------------------------------
 
-int TAURAForm::SendToServer(const wchar_t *host, int port, TStringStream *rw_bufer)
+int __fastcall TAURAForm::SendToServer(const wchar_t *host, int port, TStringStream *rw_bufer)
 {
   TIdTCPClient *AURAClient;
   int res = 0;
@@ -537,7 +536,7 @@ int TAURAForm::SendToServer(const wchar_t *host, int port, TStringStream *rw_buf
 }
 //---------------------------------------------------------------------------
 
-TIdTCPClient *TAURAForm::CreateSender(const wchar_t *host, int port)
+TIdTCPClient* __fastcall TAURAForm::CreateSender(const wchar_t *host, int port)
 {
   TIdTCPClient *sender = new TIdTCPClient(AURAForm);
 
@@ -553,7 +552,7 @@ TIdTCPClient *TAURAForm::CreateSender(const wchar_t *host, int port)
 }
 //---------------------------------------------------------------------------
 
-void TAURAForm::FreeSender(TIdTCPClient *sender)
+void __fastcall TAURAForm::FreeSender(TIdTCPClient *sender)
 {
   if (sender)
 	{
@@ -607,6 +606,8 @@ void __fastcall TAURAForm::NewCfgClick(TObject *Sender)
 		   SendToServer(Host->Text.c_str(), Port->Text.ToInt(), ms);
 		 }
 	  __finally {delete cfg; delete ms;}
+
+	  Connect->Click();
 	}
 }
 //---------------------------------------------------------------------------
@@ -745,7 +746,7 @@ void __fastcall TAURAForm::EditBookClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void TAURAForm::CreateEditForm()
+void __fastcall TAURAForm::CreateEditForm()
 {
   if (!EditForm)
 	{
@@ -910,7 +911,7 @@ void __fastcall TAURAForm::EditCancelClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void TAURAForm::CreateNewForm()
+void __fastcall TAURAForm::CreateNewForm()
 {
   if (!NewForm)
 	{
@@ -1055,7 +1056,7 @@ void __fastcall TAURAForm::NewCancelClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void TAURAForm::CreatePacketForm()
+void __fastcall TAURAForm::CreatePacketForm()
 {
   if (!PacketForm)
 	{
@@ -1153,7 +1154,7 @@ void TAURAForm::CreatePacketForm()
 }
 //---------------------------------------------------------------------------
 
-void TAURAForm::CreateRecpList(std::vector<int> *recp_list)
+void __fastcall TAURAForm::CreateRecpList(std::vector<int> *recp_list)
 {
   try
 	 {
@@ -1741,7 +1742,7 @@ void __fastcall TAURAForm::SaveLogClick(TObject *Sender)
 		 }
 	  catch (Exception &e)
 		 {
-		   AddActionLog("Експорт логуу: " + e.ToString());
+		   AddActionLog("Експорт логу: " + e.ToString());
 		 }
 	}
 
@@ -1749,4 +1750,159 @@ void __fastcall TAURAForm::SaveLogClick(TObject *Sender)
   SaveCfgDialog->FileName = "";
 }
 //---------------------------------------------------------------------------
+
+void __fastcall TAURAForm::AddrBookCheckTimerTimer(TObject *Sender)
+{
+  if (book_changed)
+	AddrBook->Save();
+}
+//---------------------------------------------------------------------------
+
+int __fastcall TAURAForm::GetConnectionID(const String &str_with_id)
+{
+  int res;
+
+  try
+	 {
+	   String operstr = str_with_id;
+	   int pos = operstr.Pos(":");
+
+	   operstr = operstr.SubString(1, pos - 1);
+
+	   if (operstr == "")
+		 operstr = "0";
+
+       res = operstr.ToInt();
+	 }
+  catch (Exception &e)
+	 {
+	   res = -1;
+	   AddActionLog("GetConnectionID: " + e.ToString());
+	 }
+
+  return res;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TAURAForm::RequestLog(int conn_id)
+{
+  try
+	 {
+       Log->Clear();
+	   String msg = "#send%log";
+
+	   TStringStream *ms = new TStringStream(msg, TEncoding::UTF8, true);
+
+	   try
+		  {
+			ms->Position = 0;
+
+			if (AskToServer(Host->Text.c_str(), Port->Text.ToInt(), ms) == 0)
+			  {
+				String recvmsg = ms->ReadString(ms->Size);
+
+				TStringList *unfiltered = new TStringList();
+
+				try
+				   {
+					 StrToList(unfiltered, recvmsg, "&");
+
+					 if (conn_id > 0)
+					   {
+						 TStringList *filtered = new TStringList();
+
+						 try
+							{
+							  String filter = IntToStr(conn_id);
+
+							  for (int i = 0; i < unfiltered->Count; i++)
+								 {
+								   if (unfiltered->Strings[i].Pos("{id: " + filter + "}"))
+									 filtered->Add(unfiltered->Strings[i]);
+								 }
+
+                              Log->Lines->AddStrings(filtered);
+							}
+						 __finally {delete filtered;}
+					   }
+					 else
+					   Log->Lines->AddStrings(unfiltered);
+
+					 SendMessage(Log->Handle, WM_VSCROLL, SB_BOTTOM, 0);
+				   }
+		  		__finally {delete unfiltered;}
+			  }
+		  }
+	   __finally {delete ms;}
+	 }
+  catch (Exception &e)
+	 {
+	   AddActionLog("RequestLog: " + e.ToString());
+     }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TAURAForm::LogFilterChange(TObject *Sender)
+{
+  int id = GetConnectionID(LogFilter->Items->Strings[LogFilter->ItemIndex]);
+  RequestLog(id);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TAURAForm::PPConfigShowClick(TObject *Sender)
+{
+  CfgKind->ItemIndex = CfgKind->Items->IndexOf(CfgList->Cells[0][row]);
+  ReadCfg->Click();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TAURAForm::PPConfigRemoveClick(TObject *Sender)
+{
+  CfgKind->ItemIndex = CfgKind->Items->IndexOf(CfgList->Cells[0][row]);
+  DelCfg->Click();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TAURAForm::PPConnectionStartClick(TObject *Sender)
+{
+  ServList->ItemIndex = ServList->Items->IndexOf(CfgList->Cells[0][row]);
+  CmdRun->Click();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TAURAForm::PPConnectionStopClick(TObject *Sender)
+{
+  ServList->ItemIndex = ServList->Items->IndexOf(CfgList->Cells[0][row]);
+  CmdStop->Click();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TAURAForm::PPConfigAddClick(TObject *Sender)
+{
+  NewCfg->Click();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TAURAForm::CfgListMouseDown(TObject *Sender, TMouseButton Button,
+          TShiftState Shift, int X, int Y)
+{
+  CfgList->MouseToCell(X, Y, col, row);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TAURAForm::CfgListMouseUp(TObject *Sender, TMouseButton Button, TShiftState Shift,
+          int X, int Y)
+{
+  if (Button == mbRight)
+	{
+	  if ((row > 0) && (GetConnectionID(CfgList->Cells[0][row]) > 0))
+		{
+          TPoint cursor;
+		  GetCursorPos(&cursor);
+		  ConnPopupMenu->Popup(cursor.X, cursor.Y);
+        }
+	}
+}
+//---------------------------------------------------------------------------
+
 
