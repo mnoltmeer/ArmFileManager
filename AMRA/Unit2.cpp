@@ -310,7 +310,7 @@ void __fastcall TAURAForm::CmdRunClick(TObject *Sender)
 {
   AddActionLog("Надсилання команди запуску з'єднання");
 
-  int id = GetConnectionID(CfgKind->Items->Strings[CfgKind->ItemIndex]);
+  int id = GetConnectionID(ServList->Items->Strings[ServList->ItemIndex]);
   String msg = "#run%" + IntToStr(id);
 
   TStringStream *ms = new TStringStream(msg, TEncoding::UTF8, true);
@@ -330,7 +330,7 @@ void __fastcall TAURAForm::CmdStopClick(TObject *Sender)
 {
   AddActionLog("Надсилання команди зупинки з'єднання");
 
-  int id = GetConnectionID(CfgKind->Items->Strings[CfgKind->ItemIndex]);
+  int id = GetConnectionID(ServList->Items->Strings[ServList->ItemIndex]);
   String msg = "#stop%" + IntToStr(id);
 
   TStringStream *ms = new TStringStream(msg, TEncoding::UTF8, true);
