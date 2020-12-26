@@ -11,6 +11,9 @@ Copyright 2019-2020 Maxim Noltmeer (m.noltmeer@gmail.com)
 #pragma package(smart_init)
 //---------------------------------------------------------------------------
 
+extern String AppPath, IndexVZ, RegionID, LogName, StationID;
+
+//---------------------------------------------------------------------------
 __fastcall TAMGuardian::TAMGuardian(bool CreateSuspended)
 	: TThread(CreateSuspended)
 {

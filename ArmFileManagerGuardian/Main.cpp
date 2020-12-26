@@ -210,38 +210,7 @@ void __fastcall TMainForm::CreateServers()
 	   TExchangeConnect *srv;
 
 	   for (int i = 0; i < servers->Count; i++)
-		  {
-			srv = new TExchangeConnect(AMColClient,
-									   UseCollector,
-									   TrayIcon1,
-									   Log,
-									   servers->Strings[i],
-									   i + 1);
-
-			srv->UsedCollectorHost = CollectorHost;
-			srv->UsedCollectorPort = CollectorPort;
-			srv->DownloadFileList = DList;
-			srv->UploadfileList = UList;
-
-			TMenuItem *srv_menu = new TMenuItem(PopupMenu1);
-
-			srv_menu->Caption = "Запустити " + srv->ConnectionConfig->Caption;
-			srv_menu->Hint = IntToStr(srv->ServerID);
-			IconPP5->Add(srv_menu);
-			IconPP5->SubMenuImages = ImageList1;
-			srv_menu->ImageIndex = 4;
-			srv_menu->Name = "srv_menu_" + IntToStr(i + 1);
-            srv_menu->OnClick = IconPPConnClick;
-
-            MenuItemList->Add(srv_menu);
-
-			SrvList->Add(srv);
-
-//якщо каталог для завантаження збігається з каталогом для оновлень
-//це з'єднання, що оновлює Менеджер
-			if (srv->ConnectionConfig->LocDirDl == UpdatesPath)
-              ManagerConnect = srv;
-		  }
+		  CreateConnection(servers->Strings[i]);
 	 }
   __finally {delete servers;}
 }
@@ -1559,3 +1528,64 @@ int __fastcall TMainForm::GetConnectionID(String caption)
   return res;
 }
 //---------------------------------------------------------------------------
+
+void __fastcall TMainForm::CreateConnection(String file)
+{
+  try
+	 {
+	   TExchangeConnect *srv = new TExchangeConnect(AMColClient,
+													UseCollector,
+													TrayIcon1,
+													Log,
+													file,
+								  					GenConnectionID());
+
+	   srv->UsedCollectorHost = CollectorHost;
+	   srv->UsedCollectorPort = CollectorPort;
+	   srv->DownloadFileList = DList;
+	   srv->UploadfileList = UList;
+
+	   TMenuItem *srv_menu = new TMenuItem(PopupMenu1);
+
+	   srv_menu->Caption = "Запустити " + srv->ConnectionConfig->Caption;
+	   srv_menu->Hint = IntToStr(srv->ServerID);
+	   IconPP5->Add(srv_menu);
+	   IconPP5->SubMenuImages = ImageList1;
+	   srv_menu->ImageIndex = 4;
+	   srv_menu->Name = "srv_menu_" + IntToStr(srv->ServerID);
+	   srv_menu->OnClick = IconPPConnClick;
+
+	   MenuItemList->Add(srv_menu);
+
+	   SrvList->Add(srv);
+
+//якщо каталог для завантаження збігається з каталогом для оновлень
+//це з'єднання, що оновлює Менеджер
+	   if (srv->ConnectionConfig->LocDirDl == UpdatesPath)
+		 ManagerConnect = srv;
+	 }
+  catch (Exception &e)
+	 {
+	   Log->Add("CreateConnection: " + e.ToString());
+	   SendToCollector("CreateConnection: " + e.ToString());
+	 }
+}
+//---------------------------------------------------------------------------
+
+int __fastcall TMainForm::GenConnectionID()
+{
+  TExchangeConnect *srv;
+  int id = 0;
+
+  for (int i = 0; i < SrvList->Count; i++)
+	 {
+	   srv = reinterpret_cast<TExchangeConnect*>(SrvList->Items[i]);
+
+	   if (srv->ServerID > id)
+		 id = srv->ServerID;
+	 }
+
+  return id + 1;
+}
+//---------------------------------------------------------------------------
+

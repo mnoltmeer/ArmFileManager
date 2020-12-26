@@ -385,35 +385,9 @@ void __fastcall TMainForm::CreateServers()
   try
 	 {
 	   GetFileList(servers, ConnPath, "*.cfg", false, true);
-	   TExchangeConnect *srv;
 
 	   for (int i = 0; i < servers->Count; i++)
-		  {
-			srv = new TExchangeConnect(AMColClient,
-                                       UseCollector,
-									   TrayIcon1,
-									   Log,
-									   servers->Strings[i],
-									   i + 1);
-
-			srv->UsedCollectorHost = CollectorHost;
-			srv->UsedCollectorPort = CollectorPort;
-			srv->DownloadFileList = DList;
-			srv->UploadfileList = UList;
-
-			TMenuItem *srv_menu = new TMenuItem(PopupMenu1);
-
-			srv_menu->Caption = "Запустити " + srv->ConnectionConfig->Caption;
-			srv_menu->Hint = IntToStr(srv->ServerID);
-			IconPP5->Add(srv_menu);
-			IconPP5->SubMenuImages = ImageList1;
-			srv_menu->ImageIndex = 4;
-            srv_menu->OnClick = IconPPConnClick;
-
-            MenuItemList->Add(srv_menu);
-
-			SrvList->Add(srv);
-		  }
+		  CreateConnection(servers->Strings[i]);
 	 }
   __finally {delete servers;}
 }
@@ -867,7 +841,7 @@ void __fastcall TMainForm::StopWork()
   catch (Exception &e)
 	 {
 	   Log->Add("Зупинка роботи: " + e.ToString());
-	   SendToCollector("Зупинка роботи", e.ToString());
+	   SendToCollector("подія", "Зупинка роботи: " + e.ToString());
 	 }
 }
 //---------------------------------------------------------------------------
@@ -890,7 +864,7 @@ void __fastcall TMainForm::StartWork()
   catch (Exception &e)
 	 {
 	   Log->Add("Початок роботи: " + e.ToString());
-	   SendToCollector("Початок роботи", e.ToString());
+	   SendToCollector("подія", "Початок роботи: " + e.ToString());
 
 	   throw new Exception("Помилка запуску!");
 	 }
@@ -1719,7 +1693,7 @@ void __fastcall TMainForm::InitInstance()
        SendToCollector("подія", "Початок роботи");
 	   Log->Add("Версія модулю: " + AppVersion);
 
-       StartWork();
+	   StartWork();
 
 	   TrayIcon1->BalloonFlags = bfInfo;
 	   TrayIcon1->BalloonHint = "Менеджер обміну файлами АРМ ВЗ запущено";
@@ -2264,7 +2238,7 @@ void __fastcall TMainForm::LoadFunctionsToELI()
 int __fastcall TMainForm::GenConnectionID()
 {
   TExchangeConnect *srv;
-  int id = -1;
+  int id = 0;
 
   for (int i = 0; i < SrvList->Count; i++)
 	 {
@@ -2275,6 +2249,44 @@ int __fastcall TMainForm::GenConnectionID()
 	 }
 
   return id + 1;
+}
+//---------------------------------------------------------------------------
+
+TExchangeConnect* __fastcall TMainForm::CreateConnection(String file)
+{
+  try
+	 {
+	   TExchangeConnect *srv = new TExchangeConnect(AMColClient,
+													UseCollector,
+													TrayIcon1,
+													Log,
+													file,
+													GenConnectionID());
+
+	   srv->UsedCollectorHost = CollectorHost;
+	   srv->UsedCollectorPort = CollectorPort;
+	   srv->DownloadFileList = DList;
+	   srv->UploadfileList = UList;
+
+	   TMenuItem *srv_menu = new TMenuItem(PopupMenu1);
+
+	   srv_menu->Caption = "Запустити " + srv->ConnectionConfig->Caption;
+	   srv_menu->Hint = IntToStr(srv->ServerID);
+	   IconPP5->Add(srv_menu);
+	   IconPP5->SubMenuImages = ImageList1;
+	   srv_menu->ImageIndex = 4;
+	   srv_menu->OnClick = IconPPConnClick;
+
+	   MenuItemList->Add(srv_menu);
+	   SrvList->Add(srv);
+
+	   RunWork(srv);
+	 }
+  catch (Exception &e)
+	 {
+	   Log->Add("CreateConnection: " + e.ToString());
+	   SendToCollector("подія", "CreateConnection: " + e.ToString());
+	 }
 }
 //---------------------------------------------------------------------------
 

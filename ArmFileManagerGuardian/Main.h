@@ -117,6 +117,8 @@ private:	// User declarations
 	TAMGThread* __fastcall FindServerThread(unsigned int thread_id);
 	void __fastcall DeleteServerThread(unsigned int id);
 	void __fastcall DeleteServerThreads();
+	void __fastcall CreateConnection(String file);
+    int __fastcall GenConnectionID();
 
 	void __fastcall RunWork(TExchangeConnect *server);
 	void __fastcall ResumeWork(TExchangeConnect *server);

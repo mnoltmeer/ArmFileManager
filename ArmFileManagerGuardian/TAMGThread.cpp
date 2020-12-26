@@ -73,22 +73,20 @@ void __fastcall TAMGThread::Work()
 		  switch (ex_res)
 			{
 			  case ES_SUCC_DL:
-							   if (Connection->ConnectionConfig->LocDirDl ==
-								   Guardian->UpdatesDirectory)
-								 {
-								   Guardian->UpdateStarted = true;
-								 }
+				{
+				  if (Connection->ConnectionConfig->LocDirDl == Guardian->UpdatesDirectory)
+					Guardian->UpdateStarted = true;
 
-							   break;
+				  break;
+				}
 
 			  case ES_SUCC_DL_UL:
-								  if (Connection->ConnectionConfig->LocDirDl ==
-									  Guardian->UpdatesDirectory)
-									{
-									  Guardian->UpdateStarted = true;
-									}
+				{
+				  if (Connection->ConnectionConfig->LocDirDl == Guardian->UpdatesDirectory)
+					Guardian->UpdateStarted = true;
 
-								  break;
+				  break;
+				}
 
 			  case ES_ERROR_STOP: Terminate(); break;
 			}

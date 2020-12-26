@@ -12,6 +12,7 @@ Copyright 2019-2020 Maxim Noltmeer (m.noltmeer@gmail.com)
 #include <Vcl.Forms.hpp>
 #include <Vcl.ComCtrls.hpp>
 #include <IdFTP.hpp>
+#include <IdHashCRC.hpp>
 #include <vector>
 #include "..\..\MyFunc\ThreadSafeLog.h"
 
@@ -146,42 +147,6 @@ class TExchangeConnect
 
 	ExchageExitCode UpLoad(String source, String mask, String destin, String backup);
 
-	/*int GetID(){return ID;}
-	void SetID(int id){ID = id;}
-
-	unsigned int GetThID(){return thID;}
-	void SetThID(unsigned int id){thID = id;}
-
-	String GetCaption(){return Config.Caption;}
-
-	String GetStatus(){return Status;}
-	void SetStatus(String status){Status = status;}
-
-	String GetCfgPath(){return CfgPath;}
-
-	TMemo *GetDList(){return DList;}
-	void SetDList(TMemo *list){DList = list;}
-
-	TMemo *GetUList(){return UList;}
-	void SetUList(TMemo *list){UList = list;}
-
-	bool GetUseCollector(){return UseCollector;}
-	void SetUseCollector(bool c_use){UseCollector = c_use;}
-
-	String GetCollectorHost(){return CollectorHost;}
-	void SetCollectorHost(String host){CollectorHost = host;}
-
-	int GetCollectorPort(){return CollectorPort;}
-	void SetCollectorPort(int port){CollectorPort = port;}
-
-	bool GetEndThread(){return EndThread;}
-	void SetEndThread(bool th_end){EndThread = th_end;}
-
-	int GetExchangeStatus(){return ExchangeStatus;}
-
-	TStringList *GetSuccList(){return SuccList;}
-	void SetSuccList(TStringList *list){SuccList = list;}*/
-
     SERVCFG *GetConfig(){return &Config;}
 
 	void CheckConfig(String cfg_file);
@@ -201,6 +166,10 @@ class TExchangeConnect
 	void WriteLog(String text);
 
 	int SendToCollector(String cathegory, String text);
+
+	bool GetVerification();
+
+	bool VerifyFile(const String &remote_file, const String &local_file);
 
   public:
 	TExchangeConnect(TIdTCPClient *Collector,
@@ -232,6 +201,7 @@ class TExchangeConnect
 	__property bool EndServerThread = {read = EndThread, write = EndThread};
 	__property int CurrentExchangeStatus = {read = ExchangeStatus};
 	__property TStringList *SuccessFiles = {read = SuccList, write = SuccList};
+	__property bool SupportsVerification = {read = GetVerification};
 
 
 	inline bool Working(){return Running;}

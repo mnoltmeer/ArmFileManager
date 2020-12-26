@@ -175,6 +175,7 @@ private:	// User declarations
 	void __fastcall InitInstance();
 	void __fastcall StopInstance();
 	void __fastcall AddFirewallRule();
+    TExchangeConnect* __fastcall CreateConnection(String file);
 
 public:		// User declarations
 	__fastcall TMainForm(TComponent* Owner);

@@ -11,7 +11,6 @@ Copyright 2019-2020 Maxim Noltmeer (m.noltmeer@gmail.com)
 #include "..\..\MyFunc\ThreadSafeLog.h"
 //---------------------------------------------------------------------------
 
-extern String AppPath, IndexVZ, RegionID, LogName, StationID;
 const int IFsz = 3;
 static wchar_t ImportantFiles[IFsz][32] = {L"ArmMngr.exe",
 										   L"main.cfg",
@@ -30,39 +29,6 @@ private:
 	int CollectorPort;
 	int MngrAdmPort;
 	bool MngrActConn;
-
-	/*bool GetUpdate(){return Update;}
-	void SetUpdate(bool is_start){Update = is_start;}
-
-	bool GetForceStop(){return ForceStop;}
-	void SetForceStop(bool is_force){ForceStop = is_force;}
-
-	String GetUpdDir(){return UpdDir;}
-	void SetUpdDir(String dir){UpdDir = dir;}
-
-	bool GetUseCol(){return UseCollector;}
-	void SetUseCol(bool is_use){UseCollector = is_use;}
-
-	TIdTCPClient *GetCol(){return Collector;}
-	void SetCol(TIdTCPClient *ptr){Collector = ptr;}
-
-	TStringList *GetLog(){return Log;}
-	void SetLog(TStringList *ptr){Log = ptr;}
-
-	bool GetUseCollector(){return UseCollector;}
-	void SetUseCollector(bool c_use){UseCollector = c_use;}
-
-	String GetCollectorHost(){return CollectorHost;}
-	void SetCollectorHost(String host){CollectorHost = host;}
-
-	int GetCollectorPort(){return CollectorPort;}
-	void SetCollectorPort(int port){CollectorPort = port;}
-
-	int GetMngrAdmPort(){return MngrAdmPort;}
-	void SetMngrAdmPort(int port){MngrAdmPort = port;}
-
-	bool GetMngrActConn(){return MngrActConn;}
-	void SetMngrActConn(bool flag){MngrActConn = flag;}*/
 
 protected:
 	void __fastcall Execute();

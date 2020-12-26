@@ -1026,9 +1026,9 @@ int TExchangeConnect::LoadFilesFromServer(String source,
 			  {
 				bool downloaded = false;
 
-				if (FileExists(destin + "\\" + src_name) && FtpLoader->SupportsVerification)
+				if (FileExists(destin + "\\" + src_name) && SupportsVerification)
 				  {
-					bool equal = FtpLoader->VerifyFile(destin + "\\" + src_name, src_name);
+					bool equal = VerifyFile(src_name, destin + "\\" + src_name);
 
 					if (!equal)
 					  {
@@ -2194,6 +2194,69 @@ void TExchangeConnect::DeleteOldBackUpDirs()
 		  }
 	 }
   __finally {delete dir_list; delete del_list;}
+}
+//---------------------------------------------------------------------------
+
+bool TExchangeConnect::GetVerification()
+{
+  bool res;
+
+  try
+	 {
+	   if (FtpLoader->Capabilities->IndexOf("XCRC") >= 0)
+		 res = true;
+	   else
+		 res = false;
+	 }
+  catch (Exception &e)
+	 {
+	   res = false;
+
+	   WriteLog("GetVerification: " + e.ToString());
+	   SendToCollector("подія", "GetVerification: " + e.ToString());
+	 }
+
+  return res;
+}
+//---------------------------------------------------------------------------
+
+bool TExchangeConnect::VerifyFile(const String &remote_file, const String &local_file)
+{
+  bool res;
+
+  try
+	 {
+	   long remote_crc = FtpLoader->CRC(remote_file);
+	   long local_crc = 0;
+	   TIdHashCRC32 *local_hash;
+	   TFileStream *local_stream;
+
+	   try
+		  {
+            local_hash = new TIdHashCRC32();
+			local_stream = new TFileStream(local_file, fmOpenRead);
+			local_crc = local_hash->HashValue(local_stream);
+		  }
+	   __finally
+		  {
+			if (local_hash) delete local_hash;
+			if (local_stream) delete local_stream;
+		  }
+
+	   if (remote_crc == local_crc)
+		 res = true;
+	   else
+         res = false;
+	 }
+  catch (Exception &e)
+	 {
+	   res = false;
+
+	   WriteLog("VerifyFile: " + e.ToString());
+	   SendToCollector("подія", "VerifyFile: " + e.ToString());
+	 }
+
+  return res;
 }
 //---------------------------------------------------------------------------
 
